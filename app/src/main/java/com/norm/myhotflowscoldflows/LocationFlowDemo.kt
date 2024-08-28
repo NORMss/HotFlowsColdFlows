@@ -16,16 +16,16 @@ import androidx.core.app.ComponentActivity
 @Composable
 fun LocationFlowDemo(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    LaunchedEffect(key1 = true) {
-        ActivityCompat.requestPermissions(
-            context as ComponentActivity,
-            arrayOf(
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-            ),
-            0
-        )
-    }
+//    LaunchedEffect(key1 = true) {
+//        ActivityCompat.requestPermissions(
+//            context as ComponentActivity,
+//            arrayOf(
+//                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+//                android.Manifest.permission.ACCESS_FINE_LOCATION,
+//            ),
+//            0
+//        )
+//    }
 
     Box(
         modifier = modifier
@@ -39,11 +39,11 @@ fun LocationFlowDemo(modifier: Modifier = Modifier) {
         val location2 by flow.collectAsState(initial = null)
 
         LaunchedEffect(location1) {
-            println("Location1 update ${location1}, ${location1}")
+            println("Location1 update ${location1?.latitude}, ${location1?.latitude}")
         }
 
         LaunchedEffect(location2) {
-            println("Location2 update ${location2}, ${location2}")
+            println("Location2 update ${location2?.latitude}, ${location2?.latitude}")
         }
     }
 
