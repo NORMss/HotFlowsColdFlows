@@ -2,26 +2,23 @@ package com.norm.myhotflowscoldflows
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
-import android.provider.CallLog.Locations
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ComponentActivity
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 @SuppressLint("MissingPermission")
 fun observeLocation(context: Context): Flow<Location> {
-//    if (!context.hasLocationPermission()) {
-//        throw RuntimeException("No permission!")
-//    }
+    if (!context.hasLocationPermission()) {
+        throw RuntimeException("No permission!")
+    }
 
     return callbackFlow {
         val client = LocationServices.getFusedLocationProviderClient(context)
@@ -29,6 +26,9 @@ fun observeLocation(context: Context): Flow<Location> {
         val request = LocationRequest.Builder(5000L)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
+//            .also {
+//                Log.d("MyLog","LocationRequest")
+//            }
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -48,12 +48,10 @@ fun observeLocation(context: Context): Flow<Location> {
     }
 }
 
-//private fun Context.hasLocationPermission(): Boolean {
-//    ActivityCompat.requestPermissions(
-//        this as ComponentActivity,
-//        arrayOf(
-//            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-//            android.Manifest.permission.ACCESS_FINE_LOCATION,
-//        ), 0
-//    )
-//}
+private fun Context.isPermissionGranted(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun Context.hasLocationPermission(): Boolean {
+    return isPermissionGranted(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+}
